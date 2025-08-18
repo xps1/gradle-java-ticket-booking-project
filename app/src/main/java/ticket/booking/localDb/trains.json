@@ -1,1 +1,23 @@
-[{"train_id":"bacs","train_no":12345,"seats":[[0,0,0,0,0,0],[0,1,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],"station_times":{"bangalore":"13:50:00","jaipur":"13:50:00","delhi":"13:50:00"},"stations":["bangalore","jaipur","delhi"],"train_info":"Train ID: bacs Train No: 12345"},{"train_id":"bacs","train_no":12345,"seats":[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],"station_times":{"bangalore":"13:50:00","jaipur":"13:50:00","delhi":"13:50:00"},"stations":["bangalore","jaipur","delhi"],"train_info":"Train ID: bacs Train No: 12345"}]
+[ {
+  "train_id" : "ABC101",
+  "train_no" : 10100,
+  "seats" : [ [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ] ],
+  "station_times" : {
+    "bangalore" : "12:00:00",
+    "jaipur" : "16:30:00",
+    "delhi" : "23:50:00"
+  },
+  "stations" : [ "bangalore", "jaipur", "delhi" ],
+  "train_info" : "Train ID: ABC101 Train No: 10100"
+}, {
+  "train_id" : "ABC102",
+  "train_no" : 10200,
+  "seats" : [ [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ] ],
+  "station_times" : {
+    "bangalore" : "9:30:00",
+    "jaipur" : "14:30:00",
+    "delhi" : "22:15:00"
+  },
+  "stations" : [ "bangalore", "jaipur", "delhi" ],
+  "train_info" : "Train ID: ABC102 Train No: 10200"
+} ]

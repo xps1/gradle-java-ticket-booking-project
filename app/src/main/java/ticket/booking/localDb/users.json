@@ -1,1 +1,28 @@
-[{"name":"Prakhar Sharan","password":"12345","hashed_password":"$2a$10$MqonEcizso4Re9iFEMajHOIHCUd5O3Q.XZX779C50ZnC/Hb6mirwW","tickets_booked":[{"ticket_id":"your_ticket_id","user_id":"abcdefgh","source":"Bangalore","destination":"Delhi","date_of_travel":"2023-12-08T18:30:00Z","train":{"train_id":"bacs","train_no":12345,"seats":[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],"station_times":{"Bangalore":"13:50:00","Jaipur":"13:50:00","Delhi":"13:50:00"},"stations":["Bangalore","Jaipur","Delhi"],"train_info":"Train ID: bacs Train No: 12345"},"ticket_info":"Ticket ID: your_ticket_id belongs to User abcdefgh from Bangalore to Delhi on 2023-12-08T18:30:00Z"}],"user_id":"abcdefgh"},{"name":"rahul","password":"hhbb11","hashed_password":"$2a$10$O/OWE.xh3gttMANiM4BIX.mo.4/myik1J739DZ25ecVENk8xhMCW2","tickets_booked":[],"user_id":"fe46da4d-c8d1-4229-97e6-600dce6941e8"},{"name":"Rohit","password":"abc1337","hashed_password":"$2a$10$QQOI3AH50cZWs3bUEPVOh.bsLDmM9LBlXnbjsAqI3Yk.lCYiMmg5m","tickets_booked":[],"user_id":"2f97e6ff-a729-4659-bba4-2417c3e35914"}]
+[ {
+  "name" : "Prakhar",
+  "password" : "prakh27",
+  "hashed_password" : "$2a$10$EdcnlBiYHTLL0vE51p4d..K.PGSjhdeVYdit.2n8al./hgAgR0wAG",
+  "tickets_booked" : [ {
+    "ticket_id" : "8b6785f4-6cef-4828-87b7-1566989c0217",
+    "user_id" : "bc96c115-34ee-4773-8427-4238f12c756a",
+    "source" : "bangalore",
+    "destination" : "delhi",
+    "date_of_travel" : "2025-08-19 02:30:33",
+    "train" : {
+      "train_id" : "ABC101",
+      "train_no" : 10100,
+      "seats" : [ [ 1, 0, 0, 0, 0, 0 ], [ 0, 1, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0 ] ],
+      "station_times" : {
+        "bangalore" : "12:00:00",
+        "jaipur" : "16:30:00",
+        "delhi" : "23:50:00"
+      },
+      "stations" : [ "bangalore", "jaipur", "delhi" ],
+      "train_info" : "Train ID: ABC101 Train No: 10100"
+    },
+    "row" : 1,
+    "col" : 1,
+    "ticket_info" : "Ticket ID: 8b6785f4-6cef-4828-87b7-1566989c0217 belongs to User bc96c115-34ee-4773-8427-4238f12c756a from bangalore to delhi on 2025-08-19 02:30:33"
+  } ],
+  "user_id" : "bc96c115-34ee-4773-8427-4238f12c756a"
+} ]

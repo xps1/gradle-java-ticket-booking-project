@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.text.SimpleDateFormat;
 
 public class UserBookingService{
 
@@ -57,7 +58,7 @@ public class UserBookingService{
 
     private void saveUserListToFile() throws IOException {
         File usersFile = new File(USER_FILE_PATH);
-        objectMapper.writeValue(usersFile, userList);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(usersFile, userList);
     }
 
     public void fetchBookings(){
@@ -69,28 +70,53 @@ public class UserBookingService{
         }
     }
 
-    // todo: Complete this function
-    public Boolean cancelBooking(String ticketId){
-
-        Scanner s = new Scanner(System.in);
-        System.out.println("Enter the ticket id to cancel");
-        ticketId = s.next();
+    public Boolean cancelBooking(String ticketId) {
 
         if (ticketId == null || ticketId.isEmpty()) {
             System.out.println("Ticket ID cannot be null or empty.");
             return Boolean.FALSE;
         }
 
-        String finalTicketId1 = ticketId;  //Because strings are immutable
-        boolean removed = user.getTicketsBooked().removeIf(ticket -> ticket.getTicketId().equals(finalTicketId1));
+        Optional<User> userFetched = userList.stream()
+                .filter(u -> u.getName().equals(user.getName())
+                        && UserServiceUtil.checkPassword(user.getPassword(), u.getHashedPassword()))
+                .findFirst();
 
-        String finalTicketId = ticketId;
-        user.getTicketsBooked().removeIf(Ticket -> Ticket.getTicketId().equals(finalTicketId));
-        if (removed) {
+        if (userFetched.isEmpty()) {
+            System.out.println("User not found.");
+            return Boolean.FALSE;
+        }
+
+        User currentUser = userFetched.get();
+
+        // ✅ Instead of removeIf, find the ticket first
+        Ticket ticketToCancel = currentUser.getTicketsBooked().stream()
+                .filter(ticket -> ticket.getTicketId().equals(ticketId))
+                .findFirst()
+                .orElse(null);
+
+        if (ticketToCancel == null) {
+            System.out.println("No ticket found with ID " + ticketId);
+            return Boolean.FALSE;
+        }
+
+        // ✅ Free the seat
+        Train train = ticketToCancel.getTrain();
+        train.getSeats().get(ticketToCancel.getRow()).set(ticketToCancel.getCol(), 0);
+
+        try {
+            // persist updated train
+            TrainService trainService = new TrainService();
+            trainService.addTrain(train);
+
+            // remove ticket from user
+            currentUser.getTicketsBooked().remove(ticketToCancel);
+            saveUserListToFile();
+
             System.out.println("Ticket with ID " + ticketId + " has been canceled.");
             return Boolean.TRUE;
-        }else{
-            System.out.println("No ticket found with ID " + ticketId);
+        } catch (IOException e) {
+            e.printStackTrace();
             return Boolean.FALSE;
         }
     }
@@ -114,61 +140,70 @@ public class UserBookingService{
             TrainService trainService = new TrainService();
             List<List<Integer>> seats = train.getSeats();
 
-            if (row >= 0 && row < seats.size() && seat >= 0 && seat < seats.get(row).size()) {
-                if (seats.get(row).get(seat) == 0) {
-                    // ✅ mark the seat as booked
-                    seats.get(row).set(seat, 1);
-                    train.setSeats(seats);
-
-                    // ✅ persist updated train
-                    trainService.addTrain(train);
-
-                    // ✅ derive source & destination from stations list
-                    String source = train.getStations().isEmpty() ? "Unknown" : train.getStations().get(0);
-                    String destination = train.getStations().size() > 1
-                            ? train.getStations().get(train.getStations().size() - 1)
-                            : "Unknown";
-
-                    // ✅ pick travel date/time
-                    // If you want a simple booking date, keep `new Date()`
-                    // If you want from station_times, take first station's time
-                    Date travelDate = new Date(); // fallback: current time
-
-                    // create Ticket object
-                    Ticket ticket = new Ticket(
-                            UUID.randomUUID().toString(),
-                            userId,
-                            source,             // ✅ passed as parameter in bookTrainSeat
-                            destination,        // ✅ passed as parameter in bookTrainSeat
-                            dateOfTravel,       // ✅ passed as parameter in bookTrainSeat
-                            train
-                    );
-
-
-                    // ✅ add to logged-in user
-                    Optional<User> userFetched = userList.stream()
-                            .filter(u -> u.getName().equals(user.getName())
-                                    && UserServiceUtil.checkPassword(user.getPassword(), u.getHashedPassword()))
-                            .findFirst();
-
-                    if (userFetched.isPresent()) {
-                        userFetched.get().getTicketsBooked().add(newTicket);
-
-                        // ✅ save user list back to file
-                        saveUserListToFile();
-                    }
-
-                    return true; // Booking successful
-                } else {
-                    return false; // Seat is already booked
-                }
-            } else {
-                return false; // Invalid row or seat index
+            // ✅ Bounds check
+            if (row < 0 || row >= seats.size() || seat < 0 || seat >= seats.get(row).size()) {
+                System.out.println("Invalid seat selection.");
+                return Boolean.FALSE;
             }
+
+            // ✅ Already booked check
+            if (seats.get(row).get(seat) == 1) {
+                System.out.println("Seat already booked.");
+                return Boolean.FALSE;
+            }
+
+            // ✅ Mark booked
+            seats.get(row).set(seat, 1);
+            train.setSeats(seats);
+
+            // Save updated train
+            trainService.addTrain(train);
+
+            // ✅ Fetch user
+            Optional<User> userFetched = userList.stream()
+                    .filter(u -> u.getName().equals(user.getName())
+                            && UserServiceUtil.checkPassword(user.getPassword(), u.getHashedPassword()))
+                    .findFirst();
+
+            if (userFetched.isEmpty()) {
+                System.out.println("User not found.");
+                return Boolean.FALSE;
+            }
+
+            User currentUser = userFetched.get();
+
+            // ✅ Travel date formatting (keep your existing string flow)
+            String travelDateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+            // ✅ Create ticket with row/col
+            Ticket ticket = new Ticket(
+                    UUID.randomUUID().toString(),                 // ticketId
+                    currentUser.getUserId(),                      // userId
+                    train.getStations().get(0),                   // source
+                    train.getStations().get(train.getStations().size() - 1), // destination
+                    travelDateStr,                                // travel date (string)
+                    train                                         // train
+            );
+
+            // Manually set row/col since your constructor doesn’t take them yet
+            ticket.setRow(row);
+            ticket.setCol(seat);
+
+            // Add ticket to user
+            currentUser.getTicketsBooked().add(ticket);
+
+            // Save updated user list
+            saveUserListToFile();
+
+            System.out.println("Booking successful. Ticket ID: " + ticket.getTicketId());
+            return Boolean.TRUE;
+
         } catch (IOException ex) {
             ex.printStackTrace();
             return Boolean.FALSE;
         }
     }
+
+
 
 }

@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.sql.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -28,6 +27,11 @@ public class Ticket{
 
     private Train train;
 
+    private int row;
+
+    private int col;
+
+
     public Ticket(){}
 
     public Ticket(String ticketId, String userId, String source, String destination, String dateOfTravel, Train train){
@@ -37,6 +41,8 @@ public class Ticket{
         this.destination = destination;
         this.dateOfTravel = dateOfTravel;
         this.train = train;
+        this.row = row;
+        this.col = col;
     }
 
     public String getTicketInfo(){
@@ -91,4 +97,21 @@ public class Ticket{
         this.train = train;
     }
 
+    public int getRow()
+    {
+        return row;
+    }
+
+    public int getCol()
+    {
+        return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
 }

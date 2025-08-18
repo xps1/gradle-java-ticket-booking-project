@@ -70,7 +70,7 @@ public class TrainService {
 
     private void saveTrainListToFile() {
         try {
-            objectMapper.writeValue(new File(TRAIN_DB_PATH), trainList);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(TRAIN_DB_PATH), trainList);
         } catch (IOException e) {
             e.printStackTrace(); // Handle the exception based on your application's requirements
         }

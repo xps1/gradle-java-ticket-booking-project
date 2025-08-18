@@ -28,7 +28,6 @@ public class App {
             return;
         }
 
-        // 🔥 Move this OUTSIDE the while loop so it remembers the last selected train
         Train trainSelectedForBooking = null;
 
         while (option != 7) {
@@ -100,14 +99,12 @@ public class App {
                     System.out.println("Select a train by typing 1,2,3...");
                     int trainChoice = scanner.nextInt();
 
-                    // ✅ Save selected train in the global variable
                     trainSelectedForBooking = trains.get(trainChoice - 1);
                     break;
 
                 case 5:
                     if (trainSelectedForBooking == null) {
-                        // ✅ Added validation so booking doesn't fail when no train selected
-                        System.out.println("⚠️ Please search and select a train first (Option 4).");
+                        System.out.println("Please search and select a train first (Option 4).");
                         break;
                     }
                     System.out.println("Select a seat out of these seats");
@@ -127,14 +124,23 @@ public class App {
 
                     Boolean booked = userBookingService.bookTrainSeat(trainSelectedForBooking, row, col);
                     if (booked.equals(Boolean.TRUE)) {
-                        System.out.println("✅ Booked! Enjoy your journey");
+                        System.out.println("Booked! Enjoy your journey");
                     } else {
-                        System.out.println("❌ Can't book this seat");
+                        System.out.println("Can't book this seat");
                     }
                     break;
 
                 case 6:
-                    System.out.println("Cancel booking feature not yet implemented.");
+                    System.out.println("Enter the Ticket ID you want to cancel:");
+                    scanner.nextLine();
+                    String ticketIdToCancel = scanner.nextLine();
+
+                    Boolean cancelled = userBookingService.cancelBooking(ticketIdToCancel);
+                    if (cancelled.equals(Boolean.TRUE)) {
+                        System.out.println("Ticket canceled successfully.");
+                    } else {
+                        System.out.println("Could not cancel the ticket. Check Ticket ID.");
+                    }
                     break;
 
                 case 7:
