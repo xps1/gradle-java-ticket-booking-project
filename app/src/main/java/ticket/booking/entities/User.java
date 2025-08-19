@@ -1,14 +1,10 @@
 package ticket.booking.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -16,8 +12,8 @@ import java.util.List;
 public class User {
 
     private String name;
-    private String password;
-    private String hashedPassword;
+    private String password;        // plain for current session/login only (not persisted)
+    private String hashedPassword;  // persisted
     private List<Ticket> ticketsBooked;
     private String userId;
 
@@ -28,47 +24,46 @@ public class User {
         this.ticketsBooked = ticketsBooked;
         this.userId = userId;
     }
-    public User(){}
-
-    public String getName() {
-        return name;
+    public User(){
+        this.ticketsBooked = new ArrayList<>();
     }
 
-    public String getPassword(){
-        return password;
+    public User(String name, String password){
+        this.name = name;
+        this.password = password;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
+    public String getName() { return name; }
+    public String getPassword(){ return password; }
+    public String getHashedPassword() { return hashedPassword; }
+    public List<Ticket> getTicketsBooked() { return ticketsBooked; }
+    public String getUserId() { return userId; }
+
+    public void setName(String name) { this.name = name; }
+    public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
+    public void setTicketsBooked(List<Ticket> ticketsBooked) { this.ticketsBooked = ticketsBooked; }
+    public void setUserId(String userId) { this.userId = userId; }
+
+    public void addTicket(Ticket ticket) {
+        if (ticketsBooked == null) {
+            ticketsBooked = new ArrayList<>();
+        }
+        ticketsBooked.add(ticket);
     }
 
-    public List<Ticket> getTicketsBooked() {
-        return ticketsBooked;
-    }
-
-    public void printTickets(){
-        for (int i = 0; i<ticketsBooked.size(); i++){
-            System.out.println(ticketsBooked.get(i).getTicketInfo());
+    public void removeTicket(Ticket ticket) {
+        if (ticket != null && ticketsBooked != null) {
+            ticketsBooked.remove(ticket);
         }
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
-    }
-
-    public void setTicketsBooked(List<Ticket> ticketsBooked) {
-        this.ticketsBooked = ticketsBooked;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void printTickets() {
+        if (ticketsBooked == null || ticketsBooked.isEmpty()) {
+            System.out.println("No tickets booked yet.");
+            return;
+        }
+        for (Ticket ticket : ticketsBooked) {
+            System.out.println(ticket.getTicketInfo());
+        }
     }
 }
